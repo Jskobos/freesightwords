@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:async' show Future;
 
-Future<SightWord> loadAsset(BuildContext context) {
+Future<WordList> loadAsset(BuildContext context) {
   return DefaultAssetBundle.of(context)
       .loadString('assets/sightwords.txt')
       .then((response) {
-    return SightWord(word: response);
+    final words = response
+        .split('\n')
+        .map((thisWord) => SightWord(word: thisWord))
+        .toList();
+    return WordList(words: words);
   });
 }
 
@@ -15,13 +19,11 @@ class SightWord {
   SightWord({this.word});
 }
 
-// class Reading {
-//   final int pages;
-//   final String title;
-//   final String text;
+class WordList {
+  final List<SightWord> words;
 
-//   Reading({this.text, this.pages, this.title});
-// }
+  WordList({this.words});
+}
 
 void main() {
   runApp(MyApp());
@@ -51,7 +53,7 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
           textTheme: TextTheme(
               bodyText2: TextStyle(color: Colors.white, fontSize: 200))),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Free Sightwords'),
     );
   }
 }
@@ -91,11 +93,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder<SightWord>(
+        body: FutureBuilder<WordList>(
             future: loadAsset(context),
-            builder: (BuildContext context, AsyncSnapshot<SightWord> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<WordList> snapshot) {
               if (snapshot.hasData) {
-                return SingleWordView(word: snapshot.data);
+                return SingleWordView(words: snapshot.data);
               } else {
                 return Center(child: Text('Loading...'));
               }
@@ -104,20 +106,24 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class SingleWordView extends StatefulWidget {
-  SingleWordView({Key key, this.word}) : super(key: key);
+  SingleWordView({Key key, this.words}) : super(key: key);
 
-  final SightWord word;
+  final WordList words;
 
   @override
   _SingleWordViewState createState() => _SingleWordViewState();
 }
 
 class _SingleWordViewState extends State<SingleWordView> {
-  void _incrementPage(newPage) {}
+  int _currentWord = 0;
 
-  void _nextWord() {}
+  void _nextWord() {
+    this.setState(() {
+      _currentWord++;
+    });
+  }
 
-  void _pageDown() {}
+  void _shuffle() {}
 
   @override
   void initState() {
@@ -138,7 +144,7 @@ class _SingleWordViewState extends State<SingleWordView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(widget.word.word),
+                    Text(widget.words.words[_currentWord].word),
                   ],
                 ),
               ),
