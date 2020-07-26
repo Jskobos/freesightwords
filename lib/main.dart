@@ -116,10 +116,15 @@ class SingleWordView extends StatefulWidget {
 
 class _SingleWordViewState extends State<SingleWordView> {
   int _currentWord = 0;
+  int _totalWords;
 
   void _nextWord() {
     this.setState(() {
-      _currentWord++;
+      if (_currentWord < (_totalWords - 1)) {
+        _currentWord++;
+      } else {
+        _currentWord = 0;
+      }
     });
   }
 
@@ -128,26 +133,31 @@ class _SingleWordViewState extends State<SingleWordView> {
   @override
   void initState() {
     super.initState();
+    _totalWords = widget.words.words.length;
   }
 
   @override
   Widget build(BuildContext context) {
     return new Center(
+      child: GestureDetector(
+        onTap: () {
+          this._nextWord();
+        },
         child: FractionallySizedBox(
-            widthFactor: 1,
-            heightFactor: 1,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(widget.words.words[_currentWord].word),
-                  ],
-                ),
+          child: Container(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(widget.words.words[_currentWord].word),
+                ],
               ),
-            )));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
