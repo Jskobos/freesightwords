@@ -138,25 +138,12 @@ class _SingleWordViewState extends State<SingleWordView> {
 
   @override
   Widget build(BuildContext context) {
-    return new Center(
-      child: GestureDetector(
-        onTap: () {
-          this._nextWord();
-        },
-        child: FractionallySizedBox(
-          child: Container(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(widget.words.words[_currentWord].word),
-                ],
-              ),
-            ),
-          ),
-        ),
+    return new InkWell(
+      onTap: () {
+        this._nextWord();
+      },
+      child: Container(
+        child: Center(child: Text(widget.words.words[_currentWord].word)),
       ),
     );
   }
